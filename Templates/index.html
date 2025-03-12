@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Homepage -->
+<div class="container mt-4">
+    <div class="jumbotron text-center">
+        <h1>Welcome to the Depression Management System</h1>
+        <p>A platform to track your mood, take assessments, and connect with support.</p>
+        {% if user.is_authenticated %}
+        <a href="#" class="btn btn-primary">Check Your Mood</a>
+        {% else %}
+        <a href="/registration" class="btn btn-primary">Get Started</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

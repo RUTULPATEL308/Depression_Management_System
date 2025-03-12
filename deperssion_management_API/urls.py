@@ -16,10 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
 from django.urls import re_path, include
+from AppFeature import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^', include('AppFeature.urls'))
+    re_path(r'^', include('AppFeature.urls')),
+    path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('assessment/', views.assessment, name='assessment'),
+    path('appointments/', views.appointments, name='appointments'),
+    path('registration/', views.registration, name='registration'),
+    path('login/', views.loginPage, name='login'),
+    path('logout/', views.logoutUser, name='logout'),
 ]

@@ -3,6 +3,9 @@ from django.contrib.auth.models import User  # Using Django's built-in User mode
 # Create your models here.
 from django.utils.timezone import now
 
+from django.db import models
+
+
 class SymptomLog(models.Model):
     """
     Stores daily symptom tracking for a patient.
@@ -62,3 +65,22 @@ class AIRecommendation(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+class CustomUser(models.Model):
+    """
+    Custom user model extending Django's built-in User model.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
+    last_login = models.DateTimeField(blank=True, null=True)
+    date_joined = models.DateTimeField(default=now)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.username
+
+

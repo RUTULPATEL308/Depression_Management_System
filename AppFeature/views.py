@@ -1,16 +1,25 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from django.contrib.auth import logout
 
 from AppFeature.models import SymptomLog, WearableData, AIRecommendation
 from AppFeature.serializers import WearableDataSerializer
 from AppFeature.serializers import SymptomLogSerializer
 from AppFeature.serializers import AIRecommendationSerializer
-
+from django.contrib.auth.forms import UserCreationForm
 from django.core.files.storage import default_storage
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+from .forms import RegistrationForm
+from django.contrib.auth import authenticate, login, logout
+
+
 
 @csrf_exempt
 def SymptomLogApi(request, id=0):
@@ -89,3 +98,48 @@ def AIRecommendationApi(request, id=0):
         recommendation = AIRecommendation.objects.get(id=id)
         recommendation.delete()
         return JsonResponse("Deleted Successfully", safe=False)
+
+
+
+def home(request):
+    return render(request, 'index.html')
+
+@login_required(login_url='login')
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
+@login_required(login_url='login')
+def assessment(request):
+    return render(request, 'assessment.html')
+
+@login_required(login_url='login')
+def appointments(request):
+    return render(request, 'appointments.html')
+
+def registration(request):
+    if request.method == "POST":
+        
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Change to your login page name
+    else:
+        form = RegistrationForm()  # Display empty form
+
+    return render(request, 'registration.html', {'form': form})
+
+def loginPage(request):
+    if request.method == 'POST':
+            # Authenticate and login the user
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('/')  # Redirect to home or any page after login
+            
+    return render(request, 'login.html')
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')  # Change to your login page name

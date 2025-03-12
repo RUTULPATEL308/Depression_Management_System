@@ -1,5 +1,5 @@
 from django.urls import re_path, include
-from AppFeature import views
+from AppFeature import views, forms
 
 urlpatterns = [
     re_path(r'^symptomsog$', views.SymptomLogApi),

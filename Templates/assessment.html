@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Assessment Page -->
+<div class="container mt-5">
+    <h2>Depression Assessment</h2>
+    <form action="/submit-assessment" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="question1">Little interest or pleasure in doing things?</label>
+            <select class="form-control" id="question1" name="question1">
+                <option value="0">Not at all</option>
+                <option value="1">Several days</option>
+                <option value="2">More than half the days</option>
+                <option value="3">Nearly every day</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit Assessment</button>
+    </form>
+</div>
+
+<script>
+    var ctx = document.getElementById('moodChart').getContext('2d');
+    var moodChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Mood Score',
+                data: [3, 5, 2, 6, 7, 4, 8],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
+{% endblock %}
