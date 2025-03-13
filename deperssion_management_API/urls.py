@@ -25,8 +25,10 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('assessment/', views.assessment, name='assessment'),
-    path('appointments/', views.appointments, name='appointments'),
     path('registration/', views.registration, name='registration'),
     path('login/', views.loginPage, name='login'),
     path('logout/', views.logoutUser, name='logout'),
+    path('appointments/', views.appointments, name='appointments'),
+   # path('submit_appointment/', views.submit_appointment, name='submit_appointment'),
+
 ]

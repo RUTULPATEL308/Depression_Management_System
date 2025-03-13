@@ -1,8 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User  # Using Django's built-in User model
 # Create your models here.
 from django.utils.timezone import now
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -83,4 +82,20 @@ class CustomUser(models.Model):
     def __str__(self):
         return self.username
 
+class BookAppointment(models.Model):
+    """
+    Stores appointment details between a patient and a healthcare provider.
+    """
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments')
+    provider = models.CharField(max_length=100, help_text="Healthcare provider's name")
+    appointment_date = models.DateTimeField(help_text="Date and time of the appointment")
+    time = models.TimeField(help_text="Time of the appointment")
+    reason = models.TextField(help_text="Reason for the appointment")
+    status = models.CharField(max_length=50, choices=[('scheduled', 'Scheduled'), ('completed', 'Completed'), ('canceled', 'Canceled')], default='scheduled')
+    timestamp = models.DateTimeField(default=now)
 
+    def __str__(self):
+        return f"Appointment for {self.patient.username} with {self.provider} on {self.appointment_date}"
+
+    class Meta:
+        ordering = ['-appointment_date']
