@@ -16,10 +16,37 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-from .forms import RegistrationForm
+from .forms import RegistrationForm,AppointmentForm
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render
+from .models import BookAppointment
 
+@login_required(login_url='login')
+def appointments(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = request.user  # Assign logged-in user
+            appointment.save()
+            return redirect('/dashboard')
+    else:
+        form = AppointmentForm()
+    #user_appointments = Appointment.objects.filter(user=request.user)
+    return render(request, 'appointments.html',{'form': form})
 
+@login_required(login_url='login')
+def submit_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            Sappointment = form.save(commit=False)
+            Sappointment.user = request.user
+            Sappointment.save()
+            return redirect('/dashboard')
+    else:
+        form = AppointmentForm()
+    return render(request, 'appointments.html', {'form': form})
 
 @csrf_exempt
 def SymptomLogApi(request, id=0):
@@ -112,9 +139,6 @@ def dashboard(request):
 def assessment(request):
     return render(request, 'assessment.html')
 
-@login_required(login_url='login')
-def appointments(request):
-    return render(request, 'appointments.html')
 
 def registration(request):
     if request.method == "POST":
@@ -143,3 +167,22 @@ def loginPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('login')  # Change to your login page name
+
+@login_required(login_url='login')
+def book_appointment(request):
+    if request.method == 'POST':
+            # Assuming you have an AppointmentForm to handle appointment submissions
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('appointments')  # Redirect to the appointments page
+        else:
+            form = AppointmentForm()  # Display empty form
+
+        return render(request, 'book_appointment.html', {'form': form})
+
+@login_required(login_url='login')
+def viewAppointment(request):
+        # Assuming you have an Appointment model to list appointments
+    Vappointments = Appointment.objects.filter(user=request.user)
+    return render(request, 'viewAppointment.html', {'appointments': Vappointments})
