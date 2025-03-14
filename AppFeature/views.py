@@ -198,7 +198,7 @@ def mental_health_assessment(request):
         if form.is_valid():
             assessment = form.save(commit=False)
             assessment.user = request.user
-            assessment.save()
+           
             
             # Get AI-based recommendation
             user_data = {
@@ -209,8 +209,9 @@ def mental_health_assessment(request):
                 "suicidal_thoughts": assessment.suicidal_thoughts,
             }
             recommendations = get_ai_recommendation(user_data)
-
-            return render(request, "mental_health_assessment.html", {
+            assessment.recommendation = "\n".join(recommendations)
+            assessment.save()
+            return render(request, "mental_health_result.html", {
                 "assessment": assessment,
                 "recommendations": recommendations
             })

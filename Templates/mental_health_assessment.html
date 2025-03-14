@@ -3,21 +3,9 @@
 <form action= "{% url 'mental_health_assessment' %}" method="post">
     {% csrf_token %}
     <h2 style="text-align: center;">Mental Health Assessment Result</h2>
-    <p><strong>Mood Level:</strong> {{ form.mood_level }}</p>
-    <p><strong>Sleep Hours:</strong> {{ form.sleep_hours }}</p>
-    <p><strong>Sleep Quality:</strong> {{ form.sleep_quality }}</p>
-    <p><strong>Interest in Activities:</strong> {{ form.interest_in_activities }}</p>
+    {{ form.as_p }}
     <button type="submit" style="display: block; width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
 </form>
 
-    
-    <h3>AI Recommendations:</h3>
-<ul>
-    {% for rec in recommendations %}
-        <li>{{ rec }}</li>
-    {% endfor %}
-</ul>
-
-<a href="{% url 'mental_health_assessment' %}">Take Another Assessment</a>
-
+  
 {% endblock %}
