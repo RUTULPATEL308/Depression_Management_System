@@ -99,3 +99,41 @@ class BookAppointment(models.Model):
 
     class Meta:
         ordering = ['-appointment_date']
+
+
+
+
+class MentalHealthAssessment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    mood_level = models.IntegerField(choices=[(i, str(i)) for i in range(1, 11)])
+    emotional_state = models.CharField(
+        max_length=20, 
+        choices=[("Happy", "Happy"), ("Sad", "Sad"), ("Anxious", "Anxious"), ("Stressed", "Stressed")]
+    )
+    sleep_hours = models.FloatField()
+    sleep_quality = models.CharField(
+        max_length=20, 
+        choices=[("Good", "Good"), ("Average", "Average"), ("Poor", "Poor")]
+    )
+    appetite_changes = models.CharField(
+        max_length=20, 
+        choices=[("Increase", "Increase"), ("Decrease", "Decrease"), ("Normal", "Normal")]
+    )
+    energy_levels = models.CharField(
+        max_length=20, 
+        choices=[("Low", "Low"), ("Normal", "Normal"), ("High", "High")]
+    )
+    interest_in_activities = models.CharField(
+        max_length=20, 
+        choices=[("Normal", "Normal"), ("Decreased", "Decreased"), ("Lost", "Lost")]
+    )
+    social_engagement = models.CharField(
+        max_length=20, 
+        choices=[("Frequent", "Frequent"), ("Occasional", "Occasional"), ("Isolated", "Isolated")]
+    )
+    suicidal_thoughts = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.created_at}"
+

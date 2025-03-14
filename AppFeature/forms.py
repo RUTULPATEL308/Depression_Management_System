@@ -3,8 +3,9 @@ from django import forms
 from django.contrib.auth.models import User
 from AppFeature.models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
-from AppFeature.models import BookAppointment
+from AppFeature.models import BookAppointment, MentalHealthAssessment
 from django.forms import ModelForm
+
 
 
 class RegistrationForm(UserCreationForm):
@@ -37,4 +38,20 @@ class AppointmentForm(ModelForm):
         fields = ['user', 'provider', 'appointment_date', 'time', 'reason']
     
         
-    
+
+
+class MentalHealthAssessmentForm(forms.ModelForm):
+    class Meta:
+        model = MentalHealthAssessment
+        fields = ['mood_level', 'emotional_state', 'sleep_hours', 'sleep_quality', 'appetite_changes', 'energy_levels', 'interest_in_activities', 'social_engagement', 'suicidal_thoughts']
+        widgets = {
+            'mood_level': forms.Select(choices=[(i, str(i)) for i in range(1, 11)], attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'emotional_state': forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'sleep_hours': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;', 'step': '0.5'}),
+            'sleep_quality': forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'appetite_changes': forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'energy_levels': forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'interest_in_activities': forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'social_engagement': forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'}),
+            'suicidal_thoughts': forms.CheckboxInput(attrs={'class': 'form-check-input', 'style': 'font-size: 14px;'}),
+        }

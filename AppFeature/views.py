@@ -16,10 +16,12 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-from .forms import RegistrationForm,AppointmentForm
+from .forms import RegistrationForm,AppointmentForm, MentalHealthAssessmentForm
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
-from .models import BookAppointment
+from .models import BookAppointment, MentalHealthAssessment
+from .ai_model import get_ai_recommendation  # Import AI function
+
 
 @login_required(login_url='login')
 def appointments(request):
@@ -186,3 +188,33 @@ def viewAppointment(request):
         # Assuming you have an Appointment model to list appointments
     Vappointments = Appointment.objects.filter(user=request.user)
     return render(request, 'viewAppointment.html', {'appointments': Vappointments})
+
+
+
+
+def mental_health_assessment(request):
+    if request.method == "POST":
+        form = MentalHealthAssessmentForm(request.POST)
+        if form.is_valid():
+            assessment = form.save(commit=False)
+            assessment.user = request.user
+            assessment.save()
+            
+            # Get AI-based recommendation
+            user_data = {
+                "mood_level": assessment.mood_level,
+                "sleep_hours": assessment.sleep_hours,
+                "sleep_quality": assessment.sleep_quality,
+                "interest_in_activities": assessment.interest_in_activities,
+                "suicidal_thoughts": assessment.suicidal_thoughts,
+            }
+            recommendations = get_ai_recommendation(user_data)
+
+            return render(request, "mental_health_assessment.html", {
+                "assessment": assessment,
+                "recommendations": recommendations
+            })
+    else:
+        form = MentalHealthAssessmentForm()
+
+    return render(request, "mental_health_assessment.html", {"form": form})

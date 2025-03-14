@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import re_path, include
 from AppFeature import views
+from AppFeature.views import mental_health_assessment
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +32,6 @@ urlpatterns = [
     path('logout/', views.logoutUser, name='logout'),
     path('appointments/', views.appointments, name='appointments'),
    # path('submit_appointment/', views.submit_appointment, name='submit_appointment'),
+    path("mental-health/", mental_health_assessment, name="mental_health_assessment"),
 
 ]
