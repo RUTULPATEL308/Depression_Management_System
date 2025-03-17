@@ -32,6 +32,5 @@ urlpatterns = [
     path('logout/', views.logoutUser, name='logout'),
     path('appointments/', views.appointments, name='appointments'),
    # path('submit_appointment/', views.submit_appointment, name='submit_appointment'),
-    path("mental-health/", mental_health_assessment, name="mental_health_assessment"),
-
+    path("mental-health/", views.mental_health_assessment, name="mental_health_assessment")
 ]

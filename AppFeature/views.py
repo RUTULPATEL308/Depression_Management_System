@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.files.storage import default_storage
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view
 
 # Create your views here.
 
@@ -191,16 +192,96 @@ def viewAppointment(request):
 
 
 
+@api_view(["POST"])
+def ai_recommendation(request):
+    """
+    API endpoint to get AI-generated mental health recommendations.
+    """
+    try:
+        user_data = request.data  # Get user input from request
+        recommendation = get_ai_recommendation(user_data)
+        return JsonResponse({"recommendation": recommendation}, safe=False)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+# def mental_health_assessment(request):
+#     if request.method == "POST":
+#         form = MentalHealthAssessmentForm(request.POST)
+#         if form.is_valid():
+#             assessment = form.save(commit=False)
+#             assessment.user = request.user
+           
+            
+#             # Get AI-based recommendation
+#             user_data = {
+#                 "mood_level": assessment.mood_level,
+#                 "sleep_hours": assessment.sleep_hours,
+#                 "sleep_quality": assessment.sleep_quality,
+#                 "interest_in_activities": assessment.interest_in_activities,
+#                 "suicidal_thoughts": assessment.suicidal_thoughts,
+#             }
+#             recommendations = get_ai_recommendation(user_data)
+#             assessment.recommendation = "\n".join(recommendations)
+#             assessment.save()
+#             return render(request, "mental_health_result.html", {
+#                 "assessment": assessment,
+#                 "recommendations": recommendations
+#             })
+#     else:
+#         form = MentalHealthAssessmentForm()
+
+#     return render(request, "mental_health_assessment.html", {"form": form})
+
+# -----------------------------------------------------------------------------------------
+# from django.shortcuts import render
+# from .forms import MentalHealthAssessmentForm
+# from .models import MentalHealthAssessment
+# from .ai_model import get_ai_recommendation  # Import AI function
+
+# def mental_health_assessment(request):
+#     if request.method == "POST":
+#         form = MentalHealthAssessmentForm(request.POST)
+#         if form.is_valid():
+#             assessment = form.save(commit=False)
+#             assessment.user = request.user  # Assign the logged-in user
+            
+#             # Prepare user data for AI model
+#             user_data = {
+#                 "mood_level": assessment.mood_level,
+#                 "sleep_hours": assessment.sleep_hours,
+#                 "sleep_quality": assessment.sleep_quality,
+#                 "interest_in_activities": assessment.interest_in_activities,
+#                 "suicidal_thoughts": assessment.suicidal_thoughts,
+#             }
+            
+#             # Get AI-generated recommendations
+#             recommendations = get_ai_recommendation(user_data)
+            
+#             # Store recommendations in the assessment model
+#             assessment.recommendation = recommendations
+#             # assessment.save()
+            
+#             return render(request, "mental_health_result.html", {
+#                 "assessment": assessment,
+#                 "recommendations": recommendations,
+#             })
+#     else:
+#         form = MentalHealthAssessmentForm()
+
+#     return render(request, "mental_health_assessment.html", {"form": form})
+from django.shortcuts import render
+from .forms import MentalHealthAssessmentForm
+from .models import MentalHealthAssessment
+from .ai_model import get_ai_recommendation  # Import AI function
 
 def mental_health_assessment(request):
     if request.method == "POST":
         form = MentalHealthAssessmentForm(request.POST)
         if form.is_valid():
             assessment = form.save(commit=False)
-            assessment.user = request.user
-           
+            assessment.user = request.user  # Assign the logged-in user
             
-            # Get AI-based recommendation
+            # Prepare user data for AI model
             user_data = {
                 "mood_level": assessment.mood_level,
                 "sleep_hours": assessment.sleep_hours,
@@ -208,12 +289,20 @@ def mental_health_assessment(request):
                 "interest_in_activities": assessment.interest_in_activities,
                 "suicidal_thoughts": assessment.suicidal_thoughts,
             }
+ 
+            # Get AI-generated recommendations
             recommendations = get_ai_recommendation(user_data)
-            assessment.recommendation = "\n".join(recommendations)
-            assessment.save()
+            
+            # Fix broken words by cleaning up AI output
+            recommendations = " ".join(recommendations.replace(" ", "").strip())  # Removes extra spaces & fixes spacing issues
+            
+            # Store recommendations in the assessment model
+            assessment.recommendation = recommendations
+            # assessment.save()
+            
             return render(request, "mental_health_result.html", {
                 "assessment": assessment,
-                "recommendations": recommendations
+                "recommendations": recommendations,
             })
     else:
         form = MentalHealthAssessmentForm()

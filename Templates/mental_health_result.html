@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h3>AI Recommendations:</h3>
-    <ul>
-        {% for rec in recommendations %}
-            <li>{{ rec }}</li>
-        {% endfor %}
-    </ul>
-    
-    <a href="{% url 'mental_health_assessment' %}">Take Another Assessment</a>
+
+<h3 style="display: inline;">AI Recommendations:</h3>
+
+{% if recommendations %}
+<span>{{ recommendations|join:" " }}</span>
+{% else %}
+<span>No recommendations available.</span>
+{% endif %}
+
+<a href="{% url 'mental_health_assessment' %}">Take Another Assessment</a>
 {% endblock %}
