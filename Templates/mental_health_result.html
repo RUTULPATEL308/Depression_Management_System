@@ -2,12 +2,13 @@
 {% block content %}
 
 <h3 style="display: inline;">AI Recommendations:</h3>
-
+<br><br>
 {% if recommendations %}
-<span>{{ recommendations|join:" " }}</span>
+<span>{{ recommendations|join:"" }}</span>
 {% else %}
 <span>No recommendations available.</span>
 {% endif %}
+<br><br>
 
 <a href="{% url 'mental_health_assessment' %}">Take Another Assessment</a>
 {% endblock %}
