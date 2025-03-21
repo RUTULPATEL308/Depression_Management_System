@@ -70,11 +70,9 @@ python manage.py test
 ## Frontend (If Applicable)
 If the project has a frontend, navigate to the frontend directory and start the application:
 ```bash
-cd frontend
-npm install
-npm start
+python manage.py runserver
 ```
-The frontend will be available at `http://localhost:3000/`.
+The frontend will be available at `http://127.0.0.1:8000/`.
 
 ## Deployment (Optional)
 For deployment, consider using:
