@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+    <header class="text-center my-4">
+        <h1>Appointment Details</h1>
+    </header>
+    <main class="container">
+        <section class="appointment-details mb-4">
+            <h2 class="mb-3">Appointment Information</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" style="border-radius: 10px; overflow: hidden;">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Field</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Appointment ID</th>
+                            <td>{{appointments.id}}</td>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <td>{{ appointments.appointment_date|date:"d/m/Y" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Time</th>
+                            <td>{{appointments.time}}</td>
+                        </tr>
+                        <tr>
+                            <th>Doctor</th>
+                            <td>{{appointments.provider}}</td>
+                        </tr>
+                        <tr>
+                            <th>Location</th>
+                            <td>Office</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>{{appointments.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="actions text-center">
+            <button class="btn btn-primary me-2" onclick="editAppointment()" disabled>Edit Appointment</button>
+            <button class="btn btn-danger" onclick="cancelAppointment()" disabled>Cancel Appointment</button>
+        </section>
+    </main>
+    <script>
+        function editAppointment() {
+            alert('Edit Appointment functionality coming soon!');
+        }
+
+        function cancelAppointment() {
+            alert('Cancel Appointment functionality coming soon!');
+        }
+    </script>
+{% endblock %}
