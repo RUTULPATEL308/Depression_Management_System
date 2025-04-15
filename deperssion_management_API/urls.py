@@ -31,6 +31,7 @@ urlpatterns = [
     path('login/', views.loginPage, name='login'),
     path('logout/', views.logoutUser, name='logout'),
     path('appointments/', views.appointments, name='appointments'),
-   # path('submit_appointment/', views.submit_appointment, name='submit_appointment'),
-    path("mental-health/", views.mental_health_assessment, name="mental_health_assessment")
+    path('books/', views.books, name='books'),
+    path("mental-health/", views.mental_health_assessment, name="mental_health_assessment"),
+    path("view-appointments/", views.view_appointments, name="view_appointments"),
 ]

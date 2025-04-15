@@ -105,7 +105,7 @@ DATABASES = {
 'default': {
 'ENGINE': 'django.db.backends.postgresql',
 'NAME': 'depression_management_database',
-'USER': 'rutul',
+'USER': 'anjali',
 'PASSWORD': 'password',
 'HOST': 'localhost',
 'PORT': '5432',
@@ -114,6 +114,12 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTHENTICATION_BACKENDS = [
+    'AppFeature.backends.EmailOrUsernameBackend',  # Replace 'yourapp' with your actual app name
+    'django.contrib.auth.backends.ModelBackend',  # Keep Django's default backend
+]
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -129,6 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 
 # Internationalization

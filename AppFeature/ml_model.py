@@ -1,140 +1,125 @@
-# import pandas as pd
-# from sklearn.model_selection import train_test_split
-# from sklearn.ensemble import RandomForestClassifier
-# import joblib
-
-# # Load dataset
-# df = pd.read_csv("mental_health_dataset.csv")
-
-# # Convert categorical data to numerical (Example)
-# df["sleep_quality"] = df["sleep_quality"].map({"Poor": 0, "Average": 1, "Good": 2})
-# df["interest_in_activities"] = df["interest_in_activities"].map({"Lost": 0, "Decreased": 1, "Normal": 2})
-# df["suicidal_thoughts"] = df["suicidal_thoughts"].map({"Yes": 1, "No": 0})
-
-# # Define features and target
-# X = df.drop(columns=["recommendation"])  # Features (User input data)
-# y = df["recommendation"]  # Target (AI-generated recommendations)
-
-# # Split dataset
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# # Train model
-# model = RandomForestClassifier(n_estimators=100, random_state=42)
-# model.fit(X_train, y_train)
-
-# # Save the model
-# joblib.dump(model, "ai_mood_recommendation.pkl")
-# print("Model trained and saved successfully!")
-
-
-# import pandas as pd
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.model_selection import train_test_split
-# import joblib
-
-# # Sample Data with Recommendations
-# data = {
-#     "mood_level": [2, 3, 7, 1, 4],
-#     "sleep_hours": [4, 5, 8, 3, 6],
-#     "sleep_quality": ["Poor", "Average", "Good", "Poor", "Average"],
-#     "interest_in_activities": ["Lost", "Decreased", "Normal", "Lost", "Decreased"],
-#     "suicidal_thoughts": ["Yes", "No", "No", "Yes", "No"],
-#     "recommendation": [
-#         "Please seek immediate help. Contact a crisis helpline.",
-#         "Consider talking to a therapist or a close friend about your feelings.",
-#         "You're doing great! Keep up with your self-care routine.",
-#         "Please reach out to a mental health professional as soon as possible.",
-#         "Try engaging in small enjoyable activities to improve your mood."
-#     ]
-# }
-
-# # Convert to DataFrame
-# df = pd.DataFrame(data)
-
-# # Encode categorical variables
-# df["sleep_quality"] = df["sleep_quality"].map({"Poor": 0, "Average": 1, "Good": 2})
-# df["interest_in_activities"] = df["interest_in_activities"].map({"Lost": 0, "Decreased": 1, "Normal": 2})
-# df["suicidal_thoughts"] = df["suicidal_thoughts"].map({"Yes": 1, "No": 0})
-
-# # Features & Target
-# X = df.drop(columns=["recommendation"])
-# y = df["recommendation"]  # Keep the target as text-based recommendations
-
-# # Train Model
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-# model = RandomForestClassifier(n_estimators=100, random_state=42)
-# model.fit(X_train, y_train)
-
-# # Save the trained model
-# joblib.dump(model, "ai_mood_recommendation.pkl")
-
-# print("AI model trained successfully and saved as ai_mood_recommendation.pkl")
-
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import joblib
 import random
+import os
 
-# Generate synthetic data
-num_samples = 500  # Increase dataset size
-
-data = {
-    "mood_level": np.random.randint(1, 11, num_samples),  # Mood scale 1-10
-    "sleep_hours": np.random.randint(2, 11, num_samples),  # Sleep hours 2-10
-    "sleep_quality": np.random.choice(["Poor", "Average", "Good"], num_samples),
-    "interest_in_activities": np.random.choice(["Lost", "Decreased", "Normal"], num_samples),
-    "suicidal_thoughts": np.random.choice(["Yes", "No"], num_samples)
+# Define book recommendations
+BOOK_RECOMMENDATIONS = {
+    "Depression": {"title": "The Noonday Demon: An Atlas of Depression", "link": "https://www.amazon.com/dp/1501123882"},
+    "Anxiety": {"title": "The Anxiety and Phobia Workbook", "link": "https://www.amazon.com/dp/1626252157"},
+    "Stress": {"title": "Burnout: The Secret to Unlocking the Stress Cycle", "link": "https://www.amazon.com/dp/198481706X"},
+    "Mindfulness": {"title": "Wherever You Go, There You Are", "link": "https://www.amazon.com/dp/1401307787"},
+    "General Well-being": {"title": "The Happiness Project", "link": "https://www.amazon.com/dp/006158326X"}
 }
 
-# Define possible recommendations
-recommendations = [
-    "Please seek immediate help. Contact a crisis helpline.",
-    "Consider talking to a therapist or a close friend about your feelings.",
-    "You're doing great! Keep up with your self-care routine.",
-    "Please reach out to a mental health professional as soon as possible.",
-    "Try engaging in small enjoyable activities to improve your mood.",
-    "Maintain a healthy sleep schedule and balanced diet.",
-    "Practice mindfulness and meditation to manage stress.",
-    "Engage in regular physical exercise for mental well-being.",
-    "Socialize with friends and family to boost your mood.",
-    "Take breaks and engage in hobbies to reduce stress."
-]
+# Load the trained model
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "ai_mood_recommendation_v3.pkl")
+model = joblib.load(MODEL_PATH)
 
-# Assign recommendations based on risk factors
-recommendation_list = []
-for i in range(num_samples):
-    if data["suicidal_thoughts"][i] == "Yes" or data["mood_level"][i] <= 2:
-        recommendation_list.append(recommendations[0])  # Crisis helpline
-    elif data["mood_level"][i] <= 4:
-        recommendation_list.append(random.choice(recommendations[1:5]))  # Therapy, small activities
-    elif data["mood_level"][i] >= 8:
-        recommendation_list.append(random.choice(recommendations[2:]))  # Positive reinforcement
+# Define categorical encoding mappings
+ENCODING_MAP = {
+    "sleep_quality": {"Poor": 0, "Average": 1, "Good": 2},
+    "interest_in_activities": {"Lost": 0, "Decreased": 1, "Normal": 2},
+    "social_engagement": {"Isolated": 0, "Occasional": 1, "Frequent": 2},
+    "energy_levels": {"Low": 0, "Normal": 1, "High": 2},
+    "appetite_changes": {"Decrease": -1, "Normal": 0, "Increase": 1},
+    "suicidal_thoughts": {"Yes": 1, "No": 0},
+    "emotional_state": {
+        "Happy": "emotional_state_Happy",
+        "Sad": "emotional_state_Sad",
+        "Anxious": "emotional_state_Anxious",
+        "Stressed": "emotional_state_Stressed",
+        "Calm": "emotional_state_Calm",
+        "Depressed": "emotional_state_Depressed"
+    }
+}
+
+def preprocess_user_data(user_data):
+    """
+    Convert user input dictionary into a model-compatible DataFrame.
+    """
+    try:
+        user_data["sleep_quality"] = ENCODING_MAP["sleep_quality"].get(user_data.get("sleep_quality", "Average"), 1)
+        user_data["interest_in_activities"] = ENCODING_MAP["interest_in_activities"].get(user_data.get("interest_in_activities", "Decreased"), 1)
+        user_data["social_engagement"] = ENCODING_MAP["social_engagement"].get(user_data.get("social_engagement", "Occasional"), 1)
+        user_data["energy_levels"] = ENCODING_MAP["energy_levels"].get(user_data.get("energy_levels", "Normal"), 1)
+        user_data["appetite_changes"] = ENCODING_MAP["appetite_changes"].get(user_data.get("appetite_changes", "Normal"), 0)
+        user_data["suicidal_thoughts"] = ENCODING_MAP["suicidal_thoughts"].get(user_data.get("suicidal_thoughts", "No"), 0)
+
+        emotional_state = user_data.get("emotional_state", "Neutral")
+        encoded_emotions = {key: 0 for key in ENCODING_MAP["emotional_state"].values()}
+        if emotional_state in ENCODING_MAP["emotional_state"]:
+            encoded_key = ENCODING_MAP["emotional_state"][emotional_state]
+            encoded_emotions[encoded_key] = 1
+
+        processed_data = {**user_data, **encoded_emotions}
+        processed_data.pop("emotional_state", None)
+
+        return pd.DataFrame([processed_data])
+
+    except Exception as e:
+        return f"Error processing user data: {str(e)}"
+
+def get_book_recommendation(emotional_state):
+    """
+    Suggests a book based on emotional state.
+    """
+    if emotional_state in ["Sad", "Depressed"]:
+        return BOOK_RECOMMENDATIONS["Depression"]
+    elif emotional_state == "Anxious":
+        return BOOK_RECOMMENDATIONS["Anxiety"]
+    elif emotional_state == "Stressed":
+        return BOOK_RECOMMENDATIONS["Stress"]
+    elif emotional_state == "Calm":
+        return BOOK_RECOMMENDATIONS["Mindfulness"]
     else:
-        recommendation_list.append(random.choice(recommendations[3:]))  # General well-being tips
+        return BOOK_RECOMMENDATIONS["General Well-being"]
 
-data["recommendation"] = recommendation_list
+def get_ai_recommendation(user_data):
+    """
+    Generate an AI recommendation based on user input.
+    """
+    try:
+        data = preprocess_user_data(user_data)
+        if isinstance(data, str):
+            return data
 
-# Convert to DataFrame
-df = pd.DataFrame(data)
+        missing_cols = set(model.feature_names_in_) - set(data.columns)
+        for col in missing_cols:
+            data[col] = 0
 
-# Encode categorical variables
-df["sleep_quality"] = df["sleep_quality"].map({"Poor": 0, "Average": 1, "Good": 2})
-df["interest_in_activities"] = df["interest_in_activities"].map({"Lost": 0, "Decreased": 1, "Normal": 2})
-df["suicidal_thoughts"] = df["suicidal_thoughts"].map({"Yes": 1, "No": 0})
+        data = data[model.feature_names_in_]
 
-# Features & Target
-X = df.drop(columns=["recommendation"])
-y = df["recommendation"]
+        recommendation = model.predict(data)[0]
+        book_recommendation = get_book_recommendation(user_data.get("emotional_state", "Neutral"))
 
-# Train Model
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-model = RandomForestClassifier(n_estimators=200, random_state=42)  # Increased estimators for better performance
-model.fit(X_train, y_train)
+        return {
+            "recommendation": recommendation,
+            "book": book_recommendation["title"],
+            "book_link": book_recommendation["link"]
+        }
 
-# Save the trained model
-joblib.dump(model, "ai_mood_recommendation.pkl")
+    except Exception as e:
+        return f"Error generating recommendation: {str(e)}"
 
-# Display dataset summary
-df.head()
+# Example Usage
+if __name__ == "__main__":
+    user_input = {
+        "mood_level": 3,
+        "emotional_state": "Sad",
+        "sleep_hours": 4.5,
+        "sleep_quality": "Poor",
+        "appetite_changes": "Decrease",
+        "energy_levels": "Low",
+        "interest_in_activities": "Lost",
+        "social_engagement": "Isolated",
+        "suicidal_thoughts": "No"
+    }
+
+    response = get_ai_recommendation(user_input)
+    print("AI Recommendation:", response["recommendation"])
+    print("Suggested Book:", response["book"], "-", response["book_link"])

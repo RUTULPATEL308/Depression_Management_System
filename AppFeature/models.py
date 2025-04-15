@@ -132,7 +132,7 @@ class MentalHealthAssessment(models.Model):
         choices=[("Frequent", "Frequent"), ("Occasional", "Occasional"), ("Isolated", "Isolated")]
     )
     suicidal_thoughts = models.BooleanField(default=False)
-    recommendation = models.TextField(help_text="AI-generated recommendation", blank=True, null=True)
+    recommendation = models.JSONField(help_text="AI-generated recommendation in JSON format", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

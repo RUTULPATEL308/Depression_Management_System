@@ -1,6 +1,8 @@
+import os
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+import joblib
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from django.contrib.auth import logout
@@ -14,7 +16,8 @@ from django.core.files.storage import default_storage
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
-
+from django.contrib import messages
+from .forms import EmailOrUsernameLoginForm
 # Create your views here.
 
 from .forms import RegistrationForm,AppointmentForm, MentalHealthAssessmentForm
@@ -30,7 +33,7 @@ def appointments(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.patient = request.user  # Assign logged-in user
+            appointment.user = request.user  # Assign logged-in user
             appointment.save()
             return redirect('/dashboard')
     else:
@@ -136,7 +139,9 @@ def home(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    # mood_history = MentalHealthAssessment.objects.all()
+    mood_history = MentalHealthAssessment.objects.filter(user=request.user)
+    return render(request, 'dashboard.html', {'mood_history': mood_history})
 
 @login_required(login_url='login')
 def assessment(request):
@@ -145,26 +150,40 @@ def assessment(request):
 
 def registration(request):
     if request.method == "POST":
-        
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')  # Change to your login page name
+        try:
+            form = RegistrationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Registration successful. You can now log in.")  # Success message
+                return redirect('login')  # Change to your login page name
+            else:
+                messages.error(request, "Please correct the errors below.")
+        except Exception as e:
+            return render(request, 'registration.html', {'error': f'An error occurred: {str(e)}'})  # Error message for invalid form
     else:
-        form = RegistrationForm()  # Display empty form
-
+        form = RegistrationForm()
     return render(request, 'registration.html', {'form': form})
 
 def loginPage(request):
-    if request.method == 'POST':
-            # Authenticate and login the user
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(request, username=username, password=password)
+    if request.user.is_authenticated:
+        return redirect('dashboard')  # Redirect after login
+
+    if request.method == "POST":
+        form = EmailOrUsernameLoginForm(request.POST)
+        if form.is_valid():
+            username_or_email = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            user = authenticate(request, username=username_or_email, password=password)
+
             if user is not None:
                 login(request, user)
-                return redirect('/')  # Redirect to home or any page after login
-            
+                return redirect('dashboard')
+            else:
+                messages.error(request, "Invalid username/email or password.")
+    else:
+        form = EmailOrUsernameLoginForm()
+
     return render(request, 'login.html')
 
 def logoutUser(request):
@@ -187,8 +206,8 @@ def book_appointment(request):
 @login_required(login_url='login')
 def viewAppointment(request):
         # Assuming you have an Appointment model to list appointments
-    Vappointments = Appointment.objects.filter(user=request.user)
-    return render(request, 'viewAppointment.html', {'appointments': Vappointments})
+    # Vappointments = Appointment.objects.filter(user=request.user)
+    return render(request, 'viewAppointment.html')
 
 
 
@@ -208,7 +227,9 @@ from django.shortcuts import render
 from .forms import MentalHealthAssessmentForm
 from .models import MentalHealthAssessment
 from .ai_model import get_ai_recommendation  # Import AI function
+# Load the trained model and encoders
 
+@login_required(login_url='login')
 def mental_health_assessment(request):
     if request.method == "POST":
         form = MentalHealthAssessmentForm(request.POST)
@@ -223,26 +244,53 @@ def mental_health_assessment(request):
                 "sleep_quality": assessment.sleep_quality,
                 "interest_in_activities": assessment.interest_in_activities,
                 "suicidal_thoughts": assessment.suicidal_thoughts,
+                "emotional_state": assessment.emotional_state,
+                "appetite_changes": assessment.appetite_changes,
+                "energy_levels": assessment.energy_levels,
+                "social_engagement": assessment.social_engagement,
             }
 
             # Get AI-generated recommendations
             recommendations = get_ai_recommendation(user_data)
-
-            # Ensure recommendations are a string
+            
             if isinstance(recommendations, list):
                 recommendations = " ".join(recommendations)  # Convert list to a single string
+                recommendations = recommendations.strip()
+            
+            # Book recommendations based on emotional state
+            book_recommendations = {
+                "Sad": ("The Happiness Project. If you want to read another book, visit out 'Books' Section", "https://pdfcoffee.com/the-happiness-project-gretchen-rubin-pdf-free.html"),
+                "Anxious": ("The Anxiety and Phobia Workbook. If you want to read another book, visit out '/Books' Section", "https://www.aspirecounselingsolutions.com/storage/app/media/Resources/Self-Talk.pdf"),
+                "Stressed": ("Burnout: The Secret to Unlocking the Stress Cycle. If you want to read another book, visit out 'Books' Section", "https://irp.cdn-website.com/54bb561b/files/uploaded/Burnout%20The%20Secret%20to%20Unlocking%20the%20Stress%20Cycle.pdf"),
+                "Calm": ("The Power of Now. If you want to read another book, visit out 'Books' Section", "https://ia601000.us.archive.org/33/items/ThePowerOfNowEckhartTolle_201806/The%20Power%20Of%20Now%20-%20Eckhart%20Tolle.pdf"),
+                "Depressed": ("Feeling Good: The New Mood Therapy. If you want to read another book, visit out 'Books' Section", "https://feelinggood.com/wp-content/uploads/2021/12/AAA-Exploring-the-Daily-Mood-Log.pdf"),
+                "Happy": ("The Book of Joy. If you want to read another book, visit out 'Books' Section", "https://drnishikantjha.com/papersCollection/The%20Book%20of%20Joy,%20.pdf"),
+            }
 
-            recommendations = recommendations.strip()  # Remove unwanted spaces
-
+            book_title, book_link = book_recommendations.get(user_data["emotional_state"], ("Mindfulness in Plain English", "https://www.amazon.com/dp/0861719069"))
+            
             # Store recommendations in the assessment model
             assessment.recommendation = recommendations
-            assessment.save()
+            assessment.book_title = book_title
+            assessment.book_link = book_link
+            # assessment.save()
 
             return render(request, "mental_health_result.html", {
                 "assessment": assessment,
-                "recommendations": recommendations,
+                "recommendations": recommendations.get('AI_Recommendation', 'No recommendation available'),
+                "book_title": book_title,
+                "book_link": book_link
             })
     else:
         form = MentalHealthAssessmentForm()
 
     return render(request, "mental_health_assessment.html", {"form": form})
+
+@login_required(login_url='login')
+def view_appointments(request):
+    # appointments = BookAppointment.objects.filter(user=request.user)  # Fetch appointments for the logged-in user
+    appointments = BookAppointment.objects.filter(patient=request.user).order_by('-appointment_date').first()  # Fetch the last appointment for the logged-in user
+    return render(request, 'viewAppointment.html', {'appointments': appointments})
+
+def books(request):
+    return render(request, 'books.html')

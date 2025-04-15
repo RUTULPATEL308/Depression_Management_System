@@ -1,16 +1,80 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- Custom CSS to make containers 100% width -->
+<style>
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+</style>
+
 <!-- Homepage -->
 <div class="container mt-4">
-    <div class="jumbotron text-center">
-        <h1>Welcome to the Depression Management System</h1>
-        <p>A platform to track your mood, take assessments, and connect with support.</p>
+    <!-- Hero Section -->
+    <div class="jumbotron text-center py-5" style="background-color: #f8f9fa;">
+        <h1 class="display-4">Welcome to the Depression Management System</h1>
+        <p class="lead">A platform to track your mood, take assessments, and connect with support.</p>
         {% if user.is_authenticated %}
-        <a href="#" class="btn btn-primary">Check Your Mood</a>
+        <a href="/mental-health/" class="btn btn-primary btn-lg">
+            <i class="bi bi-emoji-smile"></i> Check Your Mood
+        </a>
         {% else %}
-        <a href="/registration" class="btn btn-primary">Get Started</a>
+        <a href="/registration" class="btn btn-primary btn-lg">
+            <i class="bi bi-person-plus"></i> Get Started
+        </a>
         {% endif %}
+    </div>
+
+    <!-- Features Section -->
+    <div class="row text-center mt-5" style="background-color: #e9ecef; padding: 20px;">
+        <div class="col-md-4">
+            <i class="bi bi-emoji-smile display-4 text-primary"></i>
+            <h3 class="mt-3">Mood Tracking</h3>
+            <p>Track your daily mood and identify patterns over time.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="bi bi-clipboard-check display-4 text-success"></i>
+            <h3 class="mt-3">Assessments</h3>
+            <p>Take scientifically-backed assessments to understand your mental health.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="bi bi-chat-dots display-4 text-info"></i>
+            <h3 class="mt-3">Support</h3>
+            <p>Connect with resources and support tailored to your needs.</p>
+        </div>
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="text-center mt-5" style="background-color: #d4edda; padding: 20px;">
+        <h2>Take the First Step Towards Better Mental Health</h2>
+        <p>Join thousands of users who are improving their mental well-being.</p>
+        <a href="/registration" class="btn btn-success btn-lg">
+            <i class="bi bi-person-plus"></i> Join Now
+        </a>
+    </div>
+</div>
+
+<!-- Doctor Section -->
+<div class="container mt-5" style="background-color: #f1f1f1; padding: 20px;">
+    <h2 class="text-center">Meet Our Experts</h2>
+    <p class="text-center">Our team of licensed professionals is here to help you.</p>
+    <div class="row mt-4">
+        <div class="col-md-4 text-center">
+            <img src="https://shoppeblack.us/wp-content/uploads/2018/08/16681499_964844290312672_7158954048931686143_n.jpg" alt="Doctor 1" class="rounded-circle" width="150" height="150">
+            <h4 class="mt-3">Dr. Emily Carter</h4>
+            <p><i class="bi bi-person-badge"></i>Clinical Psychologist</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <img src="https://upperlinehealth.com/wp-content/uploads/2023/04/Smith-400x400.webp" alt="Doctor 2" class="rounded-circle" width="150" height="150">
+            <h4 class="mt-3">Dr. Michael Smith</h4>
+            <p><i class="bi bi-person-badge"></i>Psychiatrist</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <img src="https://virginiahernia.com/wp-content/uploads/2020/12/DrLeeDec2020b-e1607705846544-1003x1024.jpg.webp" alt="Doctor 3" class="rounded-circle" width="150" height="150">
+            <h4 class="mt-3">Dr. Sophia Lee</h4>
+            <p><i class="bi bi-person-badge"></i>Therapist</p>
+        </div>
     </div>
 </div>
 

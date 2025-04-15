@@ -1,14 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3 style="display: inline;">AI Recommendations:</h3>
-<br><br>
-{% if recommendations %}
-<span>{{ recommendations|join:"" }}</span>
-{% else %}
-<span>No recommendations available.</span>
-{% endif %}
-<br><br>
+<h1 class="text-center">Mental Health Assessment Result</h1>
+<br>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped" style="border-radius: 10px; overflow: hidden;">
+        <thead class="thead-light">
+            <tr>
+                <th colspan="2" class="text-center" style="width: 100%;">AI Recommendations</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-left" style="width: 50%;">Recommendations about mood by AI</td>
+                <td style="width: 50%;">{{ recommendations }}</td>
+            </tr>
+            {% if book_title and book_link %}
+            <tr>
+                <th class="text-left" style="width: 50%;">Suggested Book</th>
+                <td style="width: 50%;"><strong>{{ book_title }}</strong></td>
+            </tr>
+            <tr>
+                <th class="text-left" style="width: 50%;">Book Link</th>
+                <td style="width: 50%;"><a href="{{ book_link }}" target="_blank">{{ book_title }}</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2" class="text-center" style="width: 100%;">No book recommendations available.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
 
-<a href="{% url 'mental_health_assessment' %}">Take Another Assessment</a>
+<a href="{% url 'mental_health_assessment' %}" class="btn btn-primary">Take Another Assessment</a>
 {% endblock %}

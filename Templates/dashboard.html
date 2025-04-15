@@ -3,33 +3,55 @@
 
 <!-- Dashboard -->
 <div class="container mt-5">
-    <h2>Dashboard</h2>
+    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
     <div class="row">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Mood Tracker</h5>
+                    <h5 class="card-title"><i class="fas fa-history"></i> Mood Recommendation History</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-calendar-alt"></i> Date</th>
+                                <th><i class="fas fa-smile"></i> Mood</th>
+                                <th><i class="fas fa-lightbulb"></i> Recommendation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mood in mood_history %}
+                            <tr>
+                                <td>{{ mood.created_at|date:"d/m/Y" }}</td>
+                                <td>{{ mood.emotional_state }}</td>
+                                <td>{{ mood.recommendation.AI_Recommendation }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                     <canvas id="moodChart"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Latest Assessment</h5>
-                    <p>Your last PHQ-9 score: <strong>12 (Moderate)</strong></p>
-                    <a href="/mental-health" class="btn btn-info">Take New Assessment</a>
+                <div class="card-body">
+                    <h5 class="card-title text-center"><i class="fas fa-check-circle"></i> Recommendation Assessment</h5>
+                    <p class="text-left">
+                        <i class="fas fa-info-circle"></i> Our AI-powered recommendation system analyzes your recent assessments to provide personalized mental health suggestions. Stay consistent with your assessments to receive the most accurate recommendations tailored to your emotional well-being.
+                    </p>
+                    <div class="text-center">
+                        <a href="/mental-health" class="btn btn-info"><i class="fas fa-clipboard-list"></i> Take New Assessment</a>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card">
-            <div class="card-body text-center">
-                <h5 class="card-title">Appointments</h5>
-                <p>Next Session: <strong>March 15, 2025</strong></p>
-                <a href="/appointments" class="btn btn-primary" style="width: 60%;">Book an Appointment</a>
-                <a href="/view-appointments" class="btn btn-secondary mt-2" style="width: 60%;">View All Appointments</a>
-            </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="fas fa-calendar-check"></i> Appointments</h5>
+                    <p><i class="fas fa-clock"></i> Next Session: <strong>March 15, 2025</strong></p>
+                    <a href="/appointments" class="btn btn-primary" style="width: 60%;"><i class="fas fa-plus-circle"></i> Book an Appointment</a>
+                    <a href="/view-appointments" class="btn btn-secondary mt-2" style="width: 60%;"><i class="fas fa-list"></i> View All Appointments</a>
+                </div>
             </div>
         </div>
     </div>
