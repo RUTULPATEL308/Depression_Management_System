@@ -28,11 +28,11 @@ pip install -r requirements.txt
 ## Database Setup
 1. Start PostgreSQL and create a database:
 ```sql
-CREATE DATABASE depression_management;
+CREATE DATABASE depression_management_database;
 ```
 2. Update the `.env` file with your database credentials:
 ```
-DB_NAME=depression_management
+DB_NAME=depression_management_database
 DB_USER=your_username
 DB_PASSWORD=your_password
 DB_HOST=localhost
