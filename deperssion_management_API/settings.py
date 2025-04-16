@@ -105,7 +105,7 @@ DATABASES = {
 'default': {
 'ENGINE': 'django.db.backends.postgresql',
 'NAME': 'depression_management_database',
-'USER': 'anjali',
+'USER': 'rutul',
 'PASSWORD': 'password',
 'HOST': 'localhost',
 'PORT': '5432',

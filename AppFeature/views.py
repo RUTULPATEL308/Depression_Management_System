@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from .forms import EmailOrUsernameLoginForm
+from django.utils.timezone import is_naive, make_aware, get_current_timezone
 # Create your views here.
 
 from .forms import RegistrationForm,AppointmentForm, MentalHealthAssessmentForm
@@ -193,15 +194,28 @@ def logoutUser(request):
 @login_required(login_url='login')
 def book_appointment(request):
     if request.method == 'POST':
-            # Assuming you have an AppointmentForm to handle appointment submissions
         form = AppointmentForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('appointments')  # Redirect to the appointments page
-        else:
-            form = AppointmentForm()  # Display empty form
+            appointment = form.save(commit=False)
 
-        return render(request, 'book_appointment.html', {'form': form})
+            if request.user.is_authenticated:
+                appointment.patient_id = request.user.id  # Save logged-in user's ID as patient_id
+            else:
+                print("User not authenticated!")
+                return redirect('login')
+
+            # Make the datetime timezone-aware
+            if appointment.appointment_date and is_naive(appointment.appointment_date):
+                appointment.appointment_date = make_aware(
+                    appointment.appointment_date, timezone=get_current_timezone()
+                )
+
+            appointment.save()
+            return redirect('dashboard')
+    else:
+        form = AppointmentForm()
+
+    return render(request, 'appointments.html', {'form': form})
 
 @login_required(login_url='login')
 def viewAppointment(request):
@@ -259,12 +273,12 @@ def mental_health_assessment(request):
             
             # Book recommendations based on emotional state
             book_recommendations = {
-                "Sad": ("The Happiness Project. If you want to read another book, visit out 'Books' Section", "https://pdfcoffee.com/the-happiness-project-gretchen-rubin-pdf-free.html"),
-                "Anxious": ("The Anxiety and Phobia Workbook. If you want to read another book, visit out '/Books' Section", "https://www.aspirecounselingsolutions.com/storage/app/media/Resources/Self-Talk.pdf"),
-                "Stressed": ("Burnout: The Secret to Unlocking the Stress Cycle. If you want to read another book, visit out 'Books' Section", "https://irp.cdn-website.com/54bb561b/files/uploaded/Burnout%20The%20Secret%20to%20Unlocking%20the%20Stress%20Cycle.pdf"),
-                "Calm": ("The Power of Now. If you want to read another book, visit out 'Books' Section", "https://ia601000.us.archive.org/33/items/ThePowerOfNowEckhartTolle_201806/The%20Power%20Of%20Now%20-%20Eckhart%20Tolle.pdf"),
-                "Depressed": ("Feeling Good: The New Mood Therapy. If you want to read another book, visit out 'Books' Section", "https://feelinggood.com/wp-content/uploads/2021/12/AAA-Exploring-the-Daily-Mood-Log.pdf"),
-                "Happy": ("The Book of Joy. If you want to read another book, visit out 'Books' Section", "https://drnishikantjha.com/papersCollection/The%20Book%20of%20Joy,%20.pdf"),
+                "Sad": ("The Happiness Project", "https://pdfcoffee.com/the-happiness-project-gretchen-rubin-pdf-free.html"),
+                "Anxious": ("The Anxiety and Phobia Workbook", "https://www.aspirecounselingsolutions.com/storage/app/media/Resources/Self-Talk.pdf"),
+                "Stressed": ("Burnout: The Secret to Unlocking the Stress Cycle", "https://irp.cdn-website.com/54bb561b/files/uploaded/Burnout%20The%20Secret%20to%20Unlocking%20the%20Stress%20Cycle.pdf"),
+                "Calm": ("The Power of Now", "https://ia601000.us.archive.org/33/items/ThePowerOfNowEckhartTolle_201806/The%20Power%20Of%20Now%20-%20Eckhart%20Tolle.pdf"),
+                "Depressed": ("Feeling Good: The New Mood Therapy", "https://feelinggood.com/wp-content/uploads/2021/12/AAA-Exploring-the-Daily-Mood-Log.pdf"),
+                "Happy": ("The Book of Joy", "https://drnishikantjha.com/papersCollection/The%20Book%20of%20Joy,%20.pdf"),
             }
 
             book_title, book_link = book_recommendations.get(user_data["emotional_state"], ("Mindfulness in Plain English", "https://www.amazon.com/dp/0861719069"))
@@ -273,7 +287,7 @@ def mental_health_assessment(request):
             assessment.recommendation = recommendations
             assessment.book_title = book_title
             assessment.book_link = book_link
-            # assessment.save()
+            assessment.save()
 
             return render(request, "mental_health_result.html", {
                 "assessment": assessment,

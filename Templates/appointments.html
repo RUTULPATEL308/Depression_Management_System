@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<!-- 
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4" style="width: 30rem;">
             <h3 class="card-title text-center">Book an Appointment</h3>
@@ -10,8 +10,8 @@
                 <div class="mb-3">
                     <label for="patient" class="form-label">Patient:</label>
                     <input type="text" id="patient" name="patient" class="form-control" value='{{ user.first_name }}', readonly>
-                    <!-- {{ user.username }} -->
-                </div>
+                     {{ user.username }} -->
+                <!-- </div>
                 <div class="mb-3">
                     <label for="provider" class="form-label">Doctor Name:</label>
                     {{ form.provider }}
@@ -37,10 +37,30 @@
                 </div>
             </form>
         </div>
-    </div> 
+    </div>  -->
+<!-- templates/appointments.html -->
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4" style="width: 30rem;">
+        <h3 class="card-title text-center">Book an Appointment</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+            <div class="mb-3">
+                <label for="user_id" class="form-label">User ID:</label>
+                <input type="text" id="user_id" class="form-control" value="{{ user.id }}" readonly>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
 
-<script>
+<!-- <script>
     document.getElementById('appointmentForm').addEventListener('submit', function(event) {
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
@@ -57,4 +77,4 @@
         console.log('Time:', time);
         console.log('Status:', status);
     });
-</script>
+</script> -->

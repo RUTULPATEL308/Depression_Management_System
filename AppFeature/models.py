@@ -86,7 +86,7 @@ class BookAppointment(models.Model):
     """
     Stores appointment details between a patient and a healthcare provider.
     """
-    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments')
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments', null=False, blank=False, default=11)
     provider = models.CharField(max_length=100, help_text="Healthcare provider's name")
     appointment_date = models.DateTimeField(help_text="Date and time of the appointment")
     time = models.TimeField(help_text="Time of the appointment")
