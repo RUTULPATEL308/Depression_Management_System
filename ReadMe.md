@@ -6,7 +6,6 @@ Ensure you have the following installed on your system:
 - PostgreSQL
 - Git
 - Virtualenv (Optional but recommended)
-- Node.js & npm (if the project has frontend dependencies)
 
 ## Clone the Repository
 ```bash
@@ -28,11 +27,11 @@ pip install -r requirements.txt
 ## Database Setup
 1. Start PostgreSQL and create a database:
 ```sql
-CREATE DATABASE depression_management;
+CREATE DATABASE depression_management_database;
 ```
 2. Update the `.env` file with your database credentials:
 ```
-DB_NAME=depression_management
+DB_NAME=depression_management_database
 DB_USER=your_username
 DB_PASSWORD=your_password
 DB_HOST=localhost
@@ -63,22 +62,11 @@ To ensure everything is working correctly, run:
 python manage.py test
 ```
 
-## API Endpoints (If Applicable)
-- `POST /api/mood-detection/` - Submit user data for mood analysis
-- `GET /api/suggestions/` - Retrieve AI-generated suggestions
-
-## Frontend (If Applicable)
-If the project has a frontend, navigate to the frontend directory and start the application:
-```bash
-python manage.py runserver
-```
-The frontend will be available at `http://127.0.0.1:8000/`.
-
 ## Deployment (Optional)
 For deployment, consider using:
 - **Docker:** Create a `Dockerfile` and use `docker-compose`.
 - **Heroku/AWS/Azure:** Set up environment variables and push the project.
 
 ---
-Now your Depression Management System should be up and running! 🚀
+Now your Depression Management System should be up and running!
 
