@@ -19,7 +19,6 @@ from rest_framework.decorators import api_view
 from django.contrib import messages
 from .forms import EmailOrUsernameLoginForm
 from django.utils.timezone import is_naive, make_aware, get_current_timezone
-# Create your views here.
 
 from .forms import RegistrationForm,AppointmentForm, MentalHealthAssessmentForm
 from django.contrib.auth import authenticate, login, logout
@@ -48,7 +47,7 @@ def submit_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             Sappointment = form.save(commit=False)
-            Sappointment.user = request.user
+            Sappointment.patient_id = request.user
             Sappointment.save()
             return redirect('/dashboard')
     else:
@@ -191,31 +190,28 @@ def logoutUser(request):
     logout(request)
     return redirect('login')  # Change to your login page name
 
+
 @login_required(login_url='login')
 def book_appointment(request):
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
+            appointment.patient = request.user.id  # ✅ Assign logged-in user ID
 
-            if request.user.is_authenticated:
-                appointment.patient_id = request.user.id  # Save logged-in user's ID as patient_id
-            else:
-                print("User not authenticated!")
-                return redirect('login')
-
-            # Make the datetime timezone-aware
+            # Timezone-aware fix
             if appointment.appointment_date and is_naive(appointment.appointment_date):
                 appointment.appointment_date = make_aware(
                     appointment.appointment_date, timezone=get_current_timezone()
                 )
-
             appointment.save()
+            print("Appointment saved for:", appointment.patient)
             return redirect('dashboard')
     else:
         form = AppointmentForm()
 
     return render(request, 'appointments.html', {'form': form})
+
 
 @login_required(login_url='login')
 def viewAppointment(request):
@@ -302,9 +298,14 @@ def mental_health_assessment(request):
 
 @login_required(login_url='login')
 def view_appointments(request):
-    # appointments = BookAppointment.objects.filter(user=request.user)  # Fetch appointments for the logged-in user
-    appointments = BookAppointment.objects.filter(patient=request.user).order_by('-appointment_date').first()  # Fetch the last appointment for the logged-in user
-    return render(request, 'viewAppointment.html', {'appointments': appointments})
+    """
+    View to display the most recent booked appointment for the logged-in user.
+    """
+    if request.user.is_authenticated:
+        last_appointment = BookAppointment.objects.filter(patient_id=request.user).order_by('-id').first()
+        return render(request, 'viewAppointment.html', {'appointment': last_appointment})
+    else:
+        return redirect('login')  # Redirect to login if user is not authenticated
 
 def books(request):
     return render(request, 'books.html')

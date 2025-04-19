@@ -3,6 +3,9 @@ from django.contrib.auth.models import User  # Using Django's built-in User mode
 from django.utils.timezone import now
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.contrib.auth.models import AnonymousUser
+from django.utils.functional import SimpleLazyObject
+from threading import local
 
 
 class SymptomLog(models.Model):
@@ -82,24 +85,36 @@ class CustomUser(models.Model):
     def __str__(self):
         return self.username
 
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.timezone import now
+from threading import local
+
+_thread_locals = local()
+
+def get_current_user():
+    return getattr(_thread_locals, 'user', None)
+
 class BookAppointment(models.Model):
-    """
-    Stores appointment details between a patient and a healthcare provider.
-    """
-    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments', null=False, blank=False, default=11)
-    provider = models.CharField(max_length=100, help_text="Healthcare provider's name")
-    appointment_date = models.DateTimeField(help_text="Date and time of the appointment")
-    time = models.TimeField(help_text="Time of the appointment")
-    reason = models.TextField(help_text="Reason for the appointment")
-    status = models.CharField(max_length=50, choices=[('scheduled', 'Scheduled'), ('completed', 'Completed'), ('canceled', 'Canceled')], default='scheduled')
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, default=get_current_user)
+    provider = models.CharField(max_length=100)
+    appointment_date = models.DateTimeField()
+    time = models.TimeField()
+    reason = models.TextField()
+    status = models.CharField(
+        max_length=50,
+        choices=[
+            ('scheduled', 'Scheduled'),
+            ('completed', 'Completed'),
+            ('canceled', 'Canceled')
+        ],
+        default='scheduled'
+    )
     timestamp = models.DateTimeField(default=now)
 
     def __str__(self):
         return f"Appointment for {self.patient.username} with {self.provider} on {self.appointment_date}"
-
-    class Meta:
-        ordering = ['-appointment_date']
-
 
 
 

@@ -17,19 +17,19 @@
                     <tbody>
                         <tr>
                             <th>Appointment ID</th>
-                            <td>{{appointments.id}}</td>
+                            <td>{{appointment.id}}</td>
                         </tr>
                         <tr>
                             <th>Date</th>
-                            <td>{{ appointments.appointment_date|date:"d/m/Y" }}</td>
+                            <td>{{ appointment.appointment_date|date:"d/m/Y" }}</td>
                         </tr>
                         <tr>
                             <th>Time</th>
-                            <td>{{appointments.time}}</td>
+                            <td>{{appointment.time}}</td>
                         </tr>
                         <tr>
                             <th>Doctor</th>
-                            <td>{{appointments.provider}}</td>
+                            <td>{{appointment.provider}}</td>
                         </tr>
                         <tr>
                             <th>Location</th>
@@ -37,7 +37,7 @@
                         </tr>
                         <tr>
                             <th>Status</th>
-                            <td>{{appointments.status}}</td>
+                            <td>{{appointment.status}}</td>
                         </tr>
                     </tbody>
                 </table>

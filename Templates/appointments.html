@@ -1,44 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<!-- 
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card p-4" style="width: 30rem;">
-            <h3 class="card-title text-center">Book an Appointment</h3>
-            <form id="appointmentForm" action="{% url 'appointments' %}" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label for="patient" class="form-label">Patient:</label>
-                    <input type="text" id="patient" name="patient" class="form-control" value='{{ user.first_name }}', readonly>
-                     {{ user.username }} -->
-                <!-- </div>
-                <div class="mb-3">
-                    <label for="provider" class="form-label">Doctor Name:</label>
-                    {{ form.provider }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="appointment_date" class="form-label">Appointment Date:</label>
-                    {{ form.appointment_date }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="time" class="form-label">Time:</label>
-                    {{ form.time }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="reason" class="form-label">Reason:</label>
-                    {{ form.reason }}
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary mb-3">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>  -->
-<!-- templates/appointments.html -->
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4" style="width: 30rem;">
         <h3 class="card-title text-center">Book an Appointment</h3>
@@ -48,7 +9,7 @@
                 {{ form.as_p }}
             </div>
             <div class="mb-3">
-                <label for="user_id" class="form-label">User ID:</label>
+                <label for="user_id_lab" class="form-label">User ID:</label>
                 <input type="text" id="user_id" class="form-control" value="{{ user.id }}" readonly>
             </div>
             <div class="d-grid">
@@ -59,22 +20,3 @@
 </div>
 
 {% endblock %}
-
-<!-- <script>
-    document.getElementById('appointmentForm').addEventListener('submit', function(event) {
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const date = document.getElementById('date').value;
-        const time = document.getElementById('time').value;
-        const status = document.getElementById('status').value;
-
-        console.log('Appointment Details:');
-        console.log('Name:', name);
-        console.log('Email:', email);
-        console.log('Phone:', phone);
-        console.log('Date:', date);
-        console.log('Time:', time);
-        console.log('Status:', status);
-    });
-</script> -->

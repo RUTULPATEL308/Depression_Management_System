@@ -23,26 +23,6 @@ class RegistrationForm(UserCreationForm):
                 'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Lastname'}),
              }
 
-# class AppointmentForm(ModelForm):
-#     user = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Enter patient name', 'style': 'font-size: 14px;', 'value': 'Hetali', 'readonly': 'readonly'}))
-#     provider = forms.ChoiceField(
-#         choices=[
-#             ('', 'Select Provider'),
-#             ('Dr. Smith', 'Dr. Smith'),
-#             ('Dr. Johnson', 'Dr. Johnson'),
-#             ('Dr. Brown', 'Dr. Brown'),
-#             ('Dr. Taylor', 'Dr. Taylor')
-#         ],
-#         widget=forms.Select(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;'})
-#     )
-#     appointment_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Enter appointment date', 'style': 'font-size: 14px;', 'type': 'date'}))
-#     time = forms.TimeField(widget=forms.TimeInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Enter appointment time', 'style': 'font-size: 14px;', 'type': 'time'}))
-#     reason = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Enter reason for appointment', 'rows': 2, 'style': 'font-size: 14px;'}))
-    
-#     class Meta:
-#         model = BookAppointment
-#         fields = ['user', 'provider', 'appointment_date', 'time', 'reason']
-    
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = BookAppointment
@@ -54,13 +34,21 @@ class AppointmentForm(forms.ModelForm):
                 ('Dr. Johnson', 'Dr. Johnson'),
                 ('Dr. Brown', 'Dr. Brown'),
                 ('Dr. Taylor', 'Dr. Taylor'),
-                ('Dr. Williams', 'Dr. Williams')  # Added new provider
-            ], attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;', 'placeholder': 'Select Provider'}),
-            'appointment_date': forms.DateTimeInput(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;', 'type': 'datetime-local'}),
-            'time': forms.TimeInput(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;', 'type': 'time'}),
-            'reason': forms.Textarea(attrs={'class': 'form-control form-control-lg', 'style': 'font-size: 14px;', 'rows': 3, 'placeholder': 'Enter reason for appointment'}),
+                ('Dr. Williams', 'Dr. Williams')
+            ], attrs={'class': 'form-control'}),
+
+            'appointment_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
+    def save(self, commit=True, user=None):
+        appointment = super().save(commit=False)
+        if user:
+            appointment.user = user  # Assign the logged-in user to the appointment
+        if commit:
+            appointment.save()
+        return appointment
 
 class MentalHealthAssessmentForm(forms.ModelForm):
     class Meta:
