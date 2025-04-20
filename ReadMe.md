@@ -56,17 +56,5 @@ python manage.py runserver
 ```
 The application will be available at `http://127.0.0.1:8000/`.
 
-## Running Tests (Optional)
-To ensure everything is working correctly, run:
-```bash
-python manage.py test
-```
-
-## Deployment (Optional)
-For deployment, consider using:
-- **Docker:** Create a `Dockerfile` and use `docker-compose`.
-- **Heroku/AWS/Azure:** Set up environment variables and push the project.
-
----
 Now your Depression Management System should be up and running!
 
